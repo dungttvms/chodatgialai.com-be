@@ -30,4 +30,25 @@ userController.register = catchAsync(async (req, res, next) => {
   );
 });
 
+userController.getCurrentUser = catchAsync(async (req, res, next) => {
+  //Step 1: Get data
+  const currentUserId = req.userId;
+
+  //Step 2: Business Logic Validator
+  const user = await User.findById(currentUserId);
+  if (!user)
+    throw new AppError(400, "User not found", "Get Current User Error");
+
+  //Step 3: Process
+
+  //Step 4: Response result
+  return sendResponse(
+    res,
+    200,
+    true,
+    user,
+    null,
+    "Get Current User Successful"
+  );
+});
 module.exports = userController;

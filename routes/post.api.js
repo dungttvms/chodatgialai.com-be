@@ -72,7 +72,7 @@ router.post(
  * @description Load All Posts
  * @access Public
  */
-router.get("/", postController.getAllPosts);
+router.get("/", postController.getPosts);
 
 /**
  * @route PUT /posts/:postId

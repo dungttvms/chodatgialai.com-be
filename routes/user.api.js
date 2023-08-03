@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/user.controller.js");
 const validators = require("../middlewares/validators.js");
 const { body } = require("express-validator");
+const authentication = require("../middlewares/authentication.js");
 
 /**
  * @route POST /users
@@ -23,4 +24,11 @@ router.post(
   ]),
   userController.register
 );
+
+/**
+ * @route GET /users/me
+ * @description Get current user info
+ * @access Login required
+ */
+router.get("/me", authentication.loginRequired, userController.getCurrentUser);
 module.exports = router;

@@ -13,7 +13,6 @@ const calculatePostCount = async (userId) => {
 
 postController.createNewPost = catchAsync(async (req, res, next) => {
   const currentUserId = req.userId;
-  console.log("eeeeeeeeeeeeeeeeeee", req);
 
   let {
     title,
@@ -27,6 +26,7 @@ postController.createNewPost = catchAsync(async (req, res, next) => {
     direction,
     price,
   } = req.body;
+
   let post = await Post.create({
     title,
     type,
@@ -38,6 +38,7 @@ postController.createNewPost = catchAsync(async (req, res, next) => {
     wish,
     direction,
     price,
+
     author: currentUserId,
   });
   await calculatePostCount(currentUserId);
@@ -45,7 +46,7 @@ postController.createNewPost = catchAsync(async (req, res, next) => {
   return sendResponse(res, 200, true, post, null, "Created Post Success");
 });
 
-postController.getAllPosts = catchAsync(async (req, res, next) => {
+postController.getPosts = catchAsync(async (req, res, next) => {
   let { page, limit } = { ...req.query };
 
   page = parseInt(page) || 1;
