@@ -50,7 +50,7 @@ postController.getPosts = catchAsync(async (req, res, next) => {
   let { page, limit } = { ...req.query };
 
   page = parseInt(page) || 1;
-  limit = parseInt(limit) || 10;
+  limit = parseInt(limit) || 5;
 
   const filterConditions = [{ isDeleted: false }];
   const filterCriteria = filterConditions.length
@@ -63,8 +63,7 @@ postController.getPosts = catchAsync(async (req, res, next) => {
   let posts = await Post.find(filterCriteria)
     .sort({ createAt: -1 })
     .skip(offset)
-    .limit(limit)
-    .populate("author");
+    .limit(limit);
 
   return sendResponse(
     res,

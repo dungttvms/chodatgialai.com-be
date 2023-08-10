@@ -1,6 +1,7 @@
 const { AppError, sendResponse, catchAsync } = require("../helpers/utils");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 const userController = {};
 
@@ -19,6 +20,16 @@ userController.register = catchAsync(async (req, res, next) => {
     phoneNumber,
   });
 
+  const verifyToken = JWT_SECRET_KEY.sign(
+    { userId: user._id },
+    JWT_SECRET_KEY,
+    {
+      expiresIn: "15m", // Token expires in 15 min
+    }
+  );
+  user.verifyToken = verifyToken;
+  await user.save();
+
   const accessToken = await user.generateToken();
   return sendResponse(
     res,
@@ -29,6 +40,26 @@ userController.register = catchAsync(async (req, res, next) => {
     "Create User successful"
   );
 });
+
+userController.verifyEmail = async (req, res, next) => {
+  const { token } = req.params;
+
+  try {
+    const decodedToken = jwt.verify(token, JWT_SECRET_KEY);
+    const userId = decodedToken.userId;
+
+    // Tìm và cập nhật trạng thái xác thực của người dùng
+    const user = await User.findByIdAndUpdate(userId, { isVerified: true });
+
+    if (!user) {
+      throw new AppError(400, "Verify Error", "User not found");
+    }
+
+    return sendResponse(res, 200, true, null, null, "Verify Email successful");
+  } catch (error) {
+    return next(new AppError(400, "Verify Error", "Invalid Token"));
+  }
+};
 
 userController.getCurrentUser = catchAsync(async (req, res, next) => {
   //Step 1: Get data

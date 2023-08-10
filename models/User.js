@@ -8,6 +8,7 @@ const userSchema = Schema(
     name: { type: String, required: true },
     phoneNumber: { type: String, required: true },
     email: { type: String, required: true, unique: true },
+    emailVerified: { type: String, default: "" },
     password: { type: String, required: true, select: false },
     role: { type: String, enum: ["admin", "client"], default: "client" },
     avatar: { type: String, required: false, default: "" },

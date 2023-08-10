@@ -26,6 +26,14 @@ router.post(
 );
 
 /**
+ * @route GET /users/verify-email/:accessToken
+ * @description
+ * @require
+ *
+ */
+router.get("/verify-email/:token", userController.verifyEmail);
+
+/**
  * @route GET /users/me
  * @description Get current user info
  * @access Login required
