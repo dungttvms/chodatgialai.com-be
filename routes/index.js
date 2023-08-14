@@ -13,6 +13,10 @@ router.use("/users", userApi);
 const postApi = require("./post.api");
 router.use("/posts", postApi);
 
+//post OAuthAPI
+const oauth = require("./oauth.api");
+router.use("/oauth", oauth);
+
 // //reaction API
 // const reactionApi = require("./reaction.api");
 // router.use("/reactions", postApi);

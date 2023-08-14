@@ -39,4 +39,25 @@ authController.login = catchAsync(async (req, res, next) => {
   return new AppError(400, "Login error", "Login Error");
 });
 
+authController.loginWithGoogle = catchAsync(async (req, res, next) => {
+  let { email, name, picture } = req.body;
+  if (!email) throw new AppError(400, "Email request", "Login google Error");
+  let user = await User.findOne({ email });
+  if (!user)
+    user = await User.create({
+      name: name,
+      email: email,
+      avatar: picture,
+    });
+  const accessToken = await user.generateToken();
+  return sendResponse(
+    res,
+    200,
+    true,
+    { user, accessToken },
+    null,
+    "login with google success"
+  );
+});
+
 module.exports = authController;
