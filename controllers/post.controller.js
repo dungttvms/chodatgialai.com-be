@@ -50,7 +50,7 @@ postController.getPosts = catchAsync(async (req, res, next) => {
   let { page, limit } = { ...req.query };
 
   page = parseInt(page) || 1;
-  limit = parseInt(limit) || 5;
+  limit = parseInt(limit) || 8;
 
   const filterConditions = [{ isDeleted: false }];
   const filterCriteria = filterConditions.length
