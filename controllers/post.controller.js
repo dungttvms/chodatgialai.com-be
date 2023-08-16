@@ -47,7 +47,7 @@ postController.createNewPost = catchAsync(async (req, res, next) => {
 });
 
 postController.getPosts = catchAsync(async (req, res, next) => {
-  let { page, limit } = { ...req.query };
+  let { page, limit } = req.query;
 
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 8;
@@ -60,8 +60,9 @@ postController.getPosts = catchAsync(async (req, res, next) => {
   const count = await Post.countDocuments(filterCriteria);
   const totalPages = Math.ceil(count / limit);
   const offset = limit * (page - 1);
+
   let posts = await Post.find(filterCriteria)
-    .sort({ createAt: -1 })
+    .sort({ createdAt: -1 })
     .skip(offset)
     .limit(limit);
 

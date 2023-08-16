@@ -10,11 +10,11 @@ const postSchema = Schema(
       enum: ["house", "residential_land", "farm_land", "office"],
     },
     description: { type: String, required: true, default: "" },
-    image: [{ type: String }],
+    image: [],
 
     author: {
       type: Schema.Types.ObjectId,
-      required: true,
+      required: false,
       ref: "User",
     },
 
@@ -41,7 +41,7 @@ const postSchema = Schema(
         "iapa",
       ],
     },
-    address: { type: String, required: true },
+    address: { type: String, required: false },
     wish: { type: String, required: true, enum: ["rent", "sell"] },
     vip: { type: Boolean, default: false },
     direction: {
@@ -66,7 +66,7 @@ const postSchema = Schema(
     price: { type: String, required: true },
     acreage: { type: String, required: true },
     isDeleted: { type: Boolean, default: false, select: false },
-    reactions: { heart: { type: Number, default: 0 } },
+    reactions: { heart: { type: Number, required: false, default: 0 } },
   },
   { timestamps: true }
 );

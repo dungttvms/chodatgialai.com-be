@@ -24,7 +24,7 @@ userController.register = catchAsync(async (req, res, next) => {
     { userId: user._id },
     JWT_SECRET_KEY,
     {
-      expiresIn: "15m", // Token expires in 15 min
+      expiresIn: "1d", // Token expires in 15 min
     }
   );
   user.verifyToken = verifyToken;

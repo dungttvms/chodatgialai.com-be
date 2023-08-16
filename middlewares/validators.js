@@ -14,7 +14,7 @@ validators.validate = (validationArray) => async (req, res, next) => {
     .array()
     .map((error) => error.msg)
     .join(" & ");
-  return sendResponse(res, 422, false, null, { message }, "Validation Error");
+  return sendResponse(res, 500, false, null, { message }, "Validation Error");
 };
 
 //Check Id có đúng chuẩn Id của MongooDB không?

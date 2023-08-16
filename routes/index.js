@@ -13,12 +13,20 @@ router.use("/users", userApi);
 const postApi = require("./post.api");
 router.use("/posts", postApi);
 
-//post OAuthAPI
+//new API
+const newApi = require("./new.api");
+router.use("/news", postApi);
+
+//blog API
+const blogApi = require("./blog.api");
+router.use("/blogs", blogApi);
+
+//OAuthAPI
 const oauth = require("./oauth.api");
 router.use("/oauth", oauth);
 
-// //reaction API
-// const reactionApi = require("./reaction.api");
-// router.use("/reactions", postApi);
+//email API
+const emailApi = require("./email.api");
+router.use("/emails", emailApi);
 
 module.exports = router;

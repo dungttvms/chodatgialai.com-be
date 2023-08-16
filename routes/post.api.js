@@ -45,9 +45,7 @@ router.post(
     body("address", "Invalid address").exists().notEmpty(),
     body("title", "Invalid Title").exists().notEmpty(),
     body("description", "Invalid Description").exists().notEmpty(),
-    body("image").isString(),
     body("wish", "Invalid wish").exists().notEmpty().isIn(["rent", "sell"]),
-
     body("direction")
       .optional()
       .isIn([
