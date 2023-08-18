@@ -2,11 +2,13 @@ const { AppError, sendResponse, catchAsync } = require("../helpers/utils");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const jwt = require("jsonwebtoken");
 
 const userController = {};
 
 userController.register = catchAsync(async (req, res, next) => {
   const { name, phoneNumber, email, password } = req.body;
+  console.log(password);
   let user = await User.findOne({ $or: [{ email }, { phoneNumber }] });
   if (user) {
     throw new AppError(400, "User already exists", "Created User error");
@@ -20,11 +22,11 @@ userController.register = catchAsync(async (req, res, next) => {
     phoneNumber,
   });
 
-  const verifyToken = JWT_SECRET_KEY.sign(
+  const verifyToken = jwt.sign(
     { userId: user._id },
-    JWT_SECRET_KEY,
+    JWT_SECRET_KEY, // Sử dụng chuỗi bí mật làm khóa
     {
-      expiresIn: "1d", // Token expires in 15 min
+      expiresIn: "1d", // Token expires in 1 day
     }
   );
   user.verifyToken = verifyToken;
@@ -60,6 +62,35 @@ userController.verifyEmail = async (req, res, next) => {
     return next(new AppError(400, "Verify Error", "Invalid Token"));
   }
 };
+
+userController.changePassword = catchAsync(async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+
+  const userId = req.params._id;
+
+  let user = await User.findOne({ userId }, "+password");
+
+  if (!user)
+    throw new AppError(400, "Invalid Credentials", "Change Password Error");
+  if (user.isGoogleAuth === true) {
+    throw new AppError(
+      400,
+      "Google-authenticated users cannot change password",
+      "Change Password Error"
+    );
+  }
+  const salt = await bcrypt.genSalt(10);
+
+  const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+  const isMatch = await bcrypt.compare(oldPassword, user.password);
+  if (!isMatch) {
+    throw new AppError(400, "Password is not match", "Change Password Error");
+  } else {
+    user.password = hashedNewPassword;
+    await user.save();
+    return sendResponse(res, 200, true, null, null, "Changed Password Success");
+  }
+});
 
 userController.getCurrentUser = catchAsync(async (req, res, next) => {
   //Step 1: Get data

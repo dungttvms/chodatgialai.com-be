@@ -26,6 +26,23 @@ router.post(
 );
 
 /**
+ * @route PUT /users/changePassword
+ * @description Change Password
+ * @body {oldPassword, newPassword}
+ * @access Login required
+ */
+
+router.put(
+  "/changePassword",
+  authentication.loginRequired,
+  validators.validate([
+    body("oldPassword", "Invalid Old Password").exists().notEmpty(),
+    body("newPassword", "Invalid New Password").exists().notEmpty(),
+  ]),
+  userController.changePassword
+);
+
+/**
  * @route GET /users/verify-email/:accessToken
  * @description
  * @require

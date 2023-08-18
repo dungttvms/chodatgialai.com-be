@@ -14,6 +14,7 @@ const userSchema = Schema(
     avatar: { type: String, required: false, default: "" },
     isDeleted: { type: Boolean, default: false, select: false },
     postCount: { type: Number, default: 0 },
+    isGoogleAuth: { type: Boolean, default: false, select: false },
   },
   { timestamps: true }
 );
