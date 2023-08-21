@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user.controller.js");
 const validators = require("../middlewares/validators.js");
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 const authentication = require("../middlewares/authentication.js");
 
 /**
@@ -40,6 +40,35 @@ router.put(
     body("newPassword", "Invalid New Password").exists().notEmpty(),
   ]),
   userController.changePassword
+);
+
+/**
+ * @route POST /users/me/:postId
+ * @description Add Favorite Post to List
+ * @body {postId}
+ * @access Login Required
+ */
+
+router.post(
+  "/me/:postId",
+  authentication.loginRequired,
+  validators.validate([
+    param("postId").exists().isString().custom(validators.checkObjectId),
+  ]),
+  userController.addPostToFavoriteList
+);
+
+/**
+ * @route DELETE /users/me/:postId
+ * @description remove a post from favorite List
+ * @body {postId}
+ * @access Login required
+ */
+
+router.delete(
+  "/me/:postId",
+  authentication.loginRequired,
+  userController.deletePostFromFavoriteList
 );
 
 /**

@@ -1,5 +1,6 @@
 const { AppError, sendResponse, catchAsync } = require("../helpers/utils");
 const User = require("../models/User");
+const Post = require("../models/Post");
 const bcrypt = require("bcryptjs");
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const jwt = require("jsonwebtoken");
@@ -42,6 +43,80 @@ userController.register = catchAsync(async (req, res, next) => {
     "Create User successful"
   );
 });
+
+userController.addPostToFavoriteList = catchAsync(async (req, res, next) => {
+  const userId = req.userId;
+  const postId = req.params.postId;
+
+  const user = await User.findById(userId);
+  if (!user)
+    throw new AppError(400, "User not exists", "Add favorite post list error");
+
+  const post = await Post.findById(postId);
+  if (!post)
+    throw new AppError(400, "Post not exists", "Add favorite post list error");
+
+  if (!user.favoritePostList.includes(postId)) {
+    user.favoritePostList.push(postId);
+    await user.save();
+    return sendResponse(
+      res,
+      200,
+      true,
+      user,
+      null,
+      "Add post to Favorite List success"
+    );
+  } else {
+    return new AppError(
+      200,
+      "Post is exists in your Favorite List",
+      "Add favorite post list error"
+    );
+  }
+});
+
+userController.deletePostFromFavoriteList = catchAsync(
+  async (req, res, next) => {
+    const userId = req.userId;
+    const postId = req.params.postId;
+
+    const user = await User.findById(userId);
+    if (!user)
+      throw new AppError(
+        400,
+        "User not exists",
+        "Delete favorite post list error"
+      );
+
+    const post = await Post.findById(postId);
+    if (!post)
+      throw new AppError(
+        400,
+        "Post not exists",
+        "Delete favorite post list error"
+      );
+
+    if (user.favoritePostList.includes(postId)) {
+      user.favoritePostList.pull(postId); // Sử dụng pull để xóa phần tử
+      await user.save();
+      return sendResponse(
+        res,
+        200,
+        true,
+        user,
+        null,
+        "Delete post from Favorite List success"
+      );
+    } else {
+      throw new AppError(
+        200,
+        "Post is not exists in your Favorite List",
+        "Delete favorite post list error"
+      );
+    }
+  }
+);
 
 userController.verifyEmail = async (req, res, next) => {
   const { token } = req.params;
@@ -113,4 +188,5 @@ userController.getCurrentUser = catchAsync(async (req, res, next) => {
     "Get Current User Successful"
   );
 });
+
 module.exports = userController;

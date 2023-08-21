@@ -15,6 +15,7 @@ const userSchema = Schema(
     isDeleted: { type: Boolean, default: false, select: false },
     postCount: { type: Number, default: 0 },
     isGoogleAuth: { type: Boolean, default: false, select: false },
+    favoritePostList: [{ type: Schema.Types.ObjectId, ref: "Post" }],
   },
   { timestamps: true }
 );
