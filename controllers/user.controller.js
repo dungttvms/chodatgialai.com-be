@@ -32,7 +32,11 @@ userController.register = catchAsync(async (req, res, next) => {
   );
   user.verifyToken = verifyToken;
   await user.save();
-
+  await novu.subscribers.identify(user._id, {
+    email: user.email,
+    phone: user.phoneNumber,
+    avatar: user.avatar,
+  });
   const accessToken = await user.generateToken();
   return sendResponse(
     res,

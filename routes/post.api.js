@@ -3,7 +3,7 @@ const router = express.Router();
 const postController = require("../controllers/post.controller");
 const authentication = require("../middlewares/authentication");
 const validators = require("../middlewares/validators");
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 
 /**
  * @route POST /posts
@@ -15,6 +15,7 @@ const { body } = require("express-validator");
 router.post(
   "/",
   authentication.loginRequired,
+
   validators.validate([
     body("type", "Invalid type")
       .exists()
@@ -71,6 +72,21 @@ router.post(
  * @access Public
  */
 router.get("/", postController.getPosts);
+
+/**
+ * @route GET /posts/:postId
+ * @description Get Single Post
+ * @access Login required
+ */
+
+router.get(
+  "/:postId",
+  authentication.loginRequired,
+  validators.validate([
+    param("postId").exists().isString().custom(validators.checkObjectId),
+  ]),
+  postController.getSinglePost
+);
 
 /**
  * @route PUT /posts/:postId

@@ -8,6 +8,7 @@ const authentication = {};
 authentication.loginRequired = (req, res, next) => {
   try {
     const tokenString = req.headers.authorization;
+
     if (!tokenString)
       throw new AppError(401, "Login Required", "Authentication Error");
     const token = tokenString.replace("Bearer ", "");
@@ -26,5 +27,7 @@ authentication.loginRequired = (req, res, next) => {
     next(error);
   }
 };
+
+//Check role is admin
 
 module.exports = authentication;

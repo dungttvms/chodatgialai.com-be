@@ -1,4 +1,4 @@
-const { catchAsync, sendResponse } = require("../helpers/utils");
+const { catchAsync, sendResponse, AppError } = require("../helpers/utils");
 const Post = require("../models/Post");
 const User = require("../models/User");
 
@@ -13,37 +13,42 @@ const calculatePostCount = async (userId) => {
 
 postController.createNewPost = catchAsync(async (req, res, next) => {
   const currentUserId = req.userId;
+  console.log(currentUserId);
+  const user = await User.findById(currentUserId);
+  if (user.role !== "admin") {
+    throw new AppError(403, "Access Denied", "Created Post Error");
+  } else {
+    let {
+      title,
+      type,
+      description,
+      image,
+      district,
+      address,
+      acreage,
+      wish,
+      direction,
+      price,
+    } = req.body;
 
-  let {
-    title,
-    type,
-    description,
-    image,
-    district,
-    address,
-    acreage,
-    wish,
-    direction,
-    price,
-  } = req.body;
+    let post = await Post.create({
+      title,
+      type,
+      description,
+      image,
+      district,
+      address,
+      acreage,
+      wish,
+      direction,
+      price,
 
-  let post = await Post.create({
-    title,
-    type,
-    description,
-    image,
-    district,
-    address,
-    acreage,
-    wish,
-    direction,
-    price,
-
-    author: currentUserId,
-  });
-  await calculatePostCount(currentUserId);
-  post = await post.populate("author");
-  return sendResponse(res, 200, true, post, null, "Created Post Success");
+      author: currentUserId,
+    });
+    await calculatePostCount(currentUserId);
+    post = await post.populate("author");
+    return sendResponse(res, 200, true, post, null, "Created Post Success");
+  }
 });
 
 postController.getPosts = catchAsync(async (req, res, next) => {
@@ -74,6 +79,14 @@ postController.getPosts = catchAsync(async (req, res, next) => {
     null,
     "Get All Posts Successful"
   );
+});
+
+postController.getSinglePost = catchAsync(async (req, res, next) => {
+  const postId = req.params.postId;
+
+  const post = await Post.findById(postId);
+  if (!post) throw new AppError(400, "Post not found", "Get Single Post Error");
+  return sendResponse(res, 200, true, post, null, "Get Single Post Success");
 });
 
 module.exports = postController;
