@@ -3,20 +3,24 @@ const router = express.Router();
 const blogController = require("../controllers/blog.controller");
 const authentication = require("../middlewares/authentication");
 const validators = require("../middlewares/validators");
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 
 /**
  * @route POST /blogs
  * @description Create a new blog
- * @body {title, imageCover, descriptionTitle, descriptionDetail}
+ * @body {title, type, imageCover, descriptionTitle, descriptionDetail}
  * @access Login Required
  */
 
 router.post(
   "/",
-  authentication.loginRequired,
+  authentication.adminRequired,
   validators.validate([
     body("title", "Invalid Title").exists().notEmpty(),
+    body("type", "Invalid Type")
+      .exists()
+      .notEmpty()
+      .isIn(["news", "feng_shui", "experience", "nice_house"]),
     body("imageCover", "Invalid ImageCover").exists().notEmpty(),
     body("descriptionTitle", "Invalid DescriptionTitle").exists().notEmpty(),
     body("descriptionDetail", "Invalid DescriptionDetail").exists().notEmpty(),
@@ -24,14 +28,54 @@ router.post(
   blogController.createNewBlog
 );
 
+/**
+ * @route GET /blogs?page=1&limit=10
+ * @description Get All Blogs
+ * @access Public
+ */
 router.get("/", blogController.getAllBlogs);
 
 /**
  * @route POST /blogs/:blogId
- * @description Get a blog
+ * @description Get single blog
  * @access public
  */
 
-router.get("/:blogId", blogController.getSingleBlog);
+router.get(
+  "/:blogId",
+  validators.validate([
+    param("blogId").exists().isString().custom(validators.checkObjectId),
+  ]),
+  blogController.getSingleBlog
+);
+
+/**
+ * @route PUT /blogs/:blogId
+ * @description Update a Blog
+ * @body {title, imageCover, descriptionTitle, descriptionDetail, type}
+ * @access Admin required
+ */
+router.put(
+  "/:blogId",
+  authentication.adminRequired,
+  validators.validate([
+    param("blogId").exists().isString().custom(validators.checkObjectId),
+  ]),
+  blogController.updateSingleBlog
+);
+
+/**
+ * @route DELETE /blogs/:blogId
+ * @description Delete a Single Blog
+ * @access Admin required
+ */
+router.delete(
+  "/:blogId",
+  authentication.adminRequired,
+  validators.validate([
+    param("blogId").exists().isString().custom(validators.checkObjectId),
+  ]),
+  blogController.deleteSingleBlog
+);
 
 module.exports = router;

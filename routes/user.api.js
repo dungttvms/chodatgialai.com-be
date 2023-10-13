@@ -85,4 +85,12 @@ router.get("/verify-email/:token", userController.verifyEmail);
  * @access Login required
  */
 router.get("/me", authentication.loginRequired, userController.getCurrentUser);
+
+/**
+ * @route GET /users
+ * @description Load All User
+ * @access Login required, administrator
+ */
+router.get("/", authentication.loginRequired);
+
 module.exports = router;

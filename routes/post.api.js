@@ -8,70 +8,43 @@ const { body, param } = require("express-validator");
 /**
  * @route POST /posts
  * @description Create a new post
- * @body {title, description, type, images, author, district, address, direction, price}
+ * @body {title, address, acreage, length, width, direction, legal, status, type, description, images, legal_images, province, vip, price, isSoldOut, videoYoutube, videoFacebook, videoTiktok}
  * @access Login required
  */
 
 router.post(
   "/",
-  authentication.loginRequired,
-
+  authentication.adminRequired,
   validators.validate([
-    body("type", "Invalid type")
-      .exists()
-      .notEmpty()
-      .isIn(["house", "residential_land", "farm_land", "office"]),
-    body("district", "Invalid district")
-      .exists()
-      .notEmpty()
-      .isIn([
-        "pleiku",
-        "chupah",
-        "chupuh",
-        "chuse",
-        "iagrai",
-        "ducco",
-        "dakdoa",
-        "chuprong",
-        "mangyang",
-        "krongpa",
-        "ankhe",
-        "phuthien",
-        "ayunpa",
-        "dakpo",
-        "kbang",
-        "kongchro",
-        "iapa",
-      ]),
+    body("title", "Invalid title").exists().notEmpty(),
     body("address", "Invalid address").exists().notEmpty(),
-    body("title", "Invalid Title").exists().notEmpty(),
-    body("description", "Invalid Description").exists().notEmpty(),
-    body("wish", "Invalid wish").exists().notEmpty().isIn(["rent", "sell"]),
-    body("direction")
-      .optional()
-      .isIn([
-        "east",
-        "west",
-        "south",
-        "north",
-        "east-north",
-        "east-south",
-        "west-north",
-        "west-south",
-      ]),
+    body("acreage", "Invalid acreage").exists().notEmpty(),
+    body("length", "Invalid length").exists().notEmpty(),
+    body("width", "Invalid width").exists().notEmpty(),
+    body("legal", "Invalid legal").exists().notEmpty(),
+    body("type", "Invalid type").exists().notEmpty(),
+    body("description", "Invalid description").exists().notEmpty(),
+    body("images", "Invalid images").exists().notEmpty(),
+    body("province", "Invalid Province")
+      .exists()
+      .notEmpty()
+      .isIn(["kontum", "gialai", "daklak", "daknong", "lamdong"]),
 
     body("price", "Invalid price").exists().notEmpty().isString(),
-    body("acreage", "Invalid acreage").exists().notEmpty().isString(),
+    body("googleMapLocation", "Invalid Google Map Location")
+      .exists()
+      .notEmpty()
+      .isString(),
   ]),
   postController.createNewPost
 );
 
 /**
  * @route GET /posts?page=1&limit=10
- * @description Load All Posts
+ * @description Get All Posts
  * @access Public
  */
-router.get("/", postController.getPosts);
+router.get("/", postController.getAllPosts);
 
 /**
  * @route GET /posts/:postId
@@ -81,7 +54,6 @@ router.get("/", postController.getPosts);
 
 router.get(
   "/:postId",
-  authentication.loginRequired,
   validators.validate([
     param("postId").exists().isString().custom(validators.checkObjectId),
   ]),
@@ -90,14 +62,30 @@ router.get(
 
 /**
  * @route PUT /posts/:postId
- * @description Edit a Post
+ * @description Update a Post
  * @body {title, description, type, images, author, district, address, direction, price}
- * @access Login required
+ * @access Admin required
  */
+router.put(
+  "/:postId",
+  authentication.adminRequired,
+  validators.validate([
+    param("postId").exists().isString().custom(validators.checkObjectId),
+  ]),
+  postController.updateSinglePost
+);
 
 /**
  * @route DELETE /posts/:postId
  * @description Delete a Post
- * @access Login required
+ * @access Admin required
  */
+router.delete(
+  "/:postId",
+  authentication.adminRequired,
+  validators.validate([
+    param("postId").exists().isString().custom(validators.checkObjectId),
+  ]),
+  postController.deleteSinglePost
+);
 module.exports = router;

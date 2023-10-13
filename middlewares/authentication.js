@@ -28,6 +28,31 @@ authentication.loginRequired = (req, res, next) => {
   }
 };
 
-//Check role is admin
+authentication.adminRequired = (req, res, next) => {
+  try {
+    const tokenString = req.headers.authorization;
+    if (!tokenString)
+      throw new AppError(401, "Login Required", "Authentication Error");
+    const token = tokenString.replace("Bearer ", "");
 
+    jwt.verify(token, JWT_SECRET_KEY, (err, payload) => {
+      if (err) {
+        if (err.name === "TokenExpiredError") {
+          throw new AppError(401, "Token Expired", "Authentication Error");
+        } else {
+          throw new AppError(401, "Token is invalid", "Authentication Error");
+        }
+      }
+
+      // Check User Role
+      if (payload.role === "admin") {
+        next();
+      } else {
+        throw new AppError(403, "Permission Denied", "Authentication Error");
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = authentication;

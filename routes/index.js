@@ -13,10 +13,6 @@ router.use("/users", userApi);
 const postApi = require("./post.api");
 router.use("/posts", postApi);
 
-//new API
-const newApi = require("./new.api");
-router.use("/news", postApi);
-
 //blog API
 const blogApi = require("./blog.api");
 router.use("/blogs", blogApi);

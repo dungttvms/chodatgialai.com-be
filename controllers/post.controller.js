@@ -5,7 +5,6 @@ const User = require("../models/User");
 const postController = {};
 const calculatePostCount = async (userId) => {
   const postCount = await Post.countDocuments({
-    author: userId,
     isDeleted: false,
   });
   await User.findByIdAndUpdate(userId, { postCount });
@@ -13,51 +12,74 @@ const calculatePostCount = async (userId) => {
 
 postController.createNewPost = catchAsync(async (req, res, next) => {
   const currentUserId = req.userId;
-  console.log(currentUserId);
-  const user = await User.findById(currentUserId);
-  if (user.role !== "admin") {
-    throw new AppError(403, "Access Denied", "Created Post Error");
-  } else {
-    let {
-      title,
-      type,
-      description,
-      image,
-      district,
-      address,
-      acreage,
-      wish,
-      direction,
-      price,
-    } = req.body;
 
-    let post = await Post.create({
-      title,
-      type,
-      description,
-      image,
-      district,
-      address,
-      acreage,
-      wish,
-      direction,
-      price,
+  let {
+    title,
+    address,
+    acreage,
+    length,
+    width,
+    direction,
+    legal,
+    status,
+    type,
+    description,
+    images,
+    legal_images,
+    province,
+    price,
+    toilet,
+    bedroom,
+    videoYoutube,
+    videoFacebook,
+    videoTiktok,
+    googleMapLocation,
+    contact_name,
+    contact_phoneNumber,
+  } = req.body;
 
-      author: currentUserId,
-    });
-    await calculatePostCount(currentUserId);
-    post = await post.populate("author");
-    return sendResponse(res, 200, true, post, null, "Created Post Success");
-  }
+  let post = await Post.create({
+    title,
+    address,
+    acreage,
+    length,
+    width,
+    direction,
+    legal,
+    status,
+    type,
+    description,
+    images,
+    legal_images,
+    province,
+    price,
+    toilet,
+    bedroom,
+    videoYoutube,
+    videoFacebook,
+    videoTiktok,
+    googleMapLocation,
+    contact_name,
+    contact_phoneNumber,
+
+    author: currentUserId,
+  });
+  await calculatePostCount(currentUserId);
+  post = await post.populate("author").execPopulate();
+  return sendResponse(res, 200, true, post, null, "Created Post Success");
 });
 
-postController.getPosts = catchAsync(async (req, res, next) => {
-  let { page, limit } = req.query;
+postController.getAllPosts = catchAsync(async (req, res, next) => {
+  let { page, limit, province } = req.query;
 
   page = parseInt(page) || 1;
-  limit = parseInt(limit) || 8;
-
+  limit = parseInt(limit) || 10;
   const filterConditions = [{ isDeleted: false }];
+
+  if (province) {
+    filterConditions.push({ province: province });
+  }
+
   const filterCriteria = filterConditions.length
     ? { $and: filterConditions }
     : {};
@@ -87,6 +109,66 @@ postController.getSinglePost = catchAsync(async (req, res, next) => {
   const post = await Post.findById(postId);
   if (!post) throw new AppError(400, "Post not found", "Get Single Post Error");
   return sendResponse(res, 200, true, post, null, "Get Single Post Success");
+});
+
+postController.updateSinglePost = catchAsync(async (req, res, next) => {
+  const postId = req.params.postId;
+  let post = await Post.findById(postId);
+  if (!post) throw new AppError(400, "Post not found", "Updated Post error");
+
+  const allows = [
+    "title",
+    "address",
+    "acreage",
+    " length",
+    "width",
+    "legal",
+    "type",
+    "description",
+    "images",
+    "legal_images",
+    "province",
+    "price",
+    "googleMapLocation",
+    "videoFacebook",
+    "videoYoutube",
+    "videoTiktok",
+    "contact_name",
+    "contact_phoneNumber",
+    "isSoldOut",
+  ];
+  allows.forEach((field) => {
+    if (req.body[field] !== undefined) {
+      post[field] = req.body[field];
+    }
+  });
+  await post.save();
+  return sendResponse(
+    res,
+    200,
+    true,
+    post,
+    null,
+    "Updated Single Post Successful"
+  );
+});
+
+postController.deleteSinglePost = catchAsync(async (req, res, next) => {
+  const postId = req.params.postId;
+  let post = await Post.findByIdAndUpdate(
+    { _id: postId },
+    { isDeleted: true },
+    { new: true }
+  );
+  if (!post) throw new AppError(404, "Post not found", "Deleted Post Error");
+  return sendResponse(
+    res,
+    200,
+    true,
+    post,
+    null,
+    "Deleted Single Post Success"
+  );
 });
 
 module.exports = postController;

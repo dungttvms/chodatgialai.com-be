@@ -4,69 +4,57 @@ const Schema = mongoose.Schema;
 const postSchema = Schema(
   {
     title: { type: String, required: true },
-    type: {
+    address: { type: String, required: false },
+    acreage: { type: String, required: true },
+    length: { type: String, required: true },
+    width: { type: String, required: true },
+    direction: { type: String },
+
+    legal: { type: String, required: true },
+    status: {
       type: String,
       required: true,
-      enum: ["house", "residential_land", "farm_land", "office"],
+      enum: ["on_sale", "sold_out"],
+      default: "on_sale",
     },
-    description: { type: String, required: true, default: "" },
-    image: [],
 
     author: {
       type: Schema.Types.ObjectId,
       required: false,
       ref: "User",
     },
-
-    district: {
+    type: {
       type: String,
       required: true,
-      enum: [
-        "pleiku",
-        "chupah",
-        "chupuh",
-        "chuse",
-        "iagrai",
-        "ducco",
-        "dakdoa",
-        "chuprong",
-        "mangyang",
-        "krongpa",
-        "ankhe",
-        "phuthien",
-        "ayunpa",
-        "dakpo",
-        "kbang",
-        "kongchro",
-        "iapa",
-      ],
     },
-    address: { type: String, required: false },
-    wish: { type: String, required: true, enum: ["rent", "sell"] },
+    description: { type: String, required: true, default: "" },
+
+    images: [],
+    legal_images: [],
+
+    province: {
+      type: String,
+      required: true,
+      enum: ["kontum", "gialai", "daklak", "daknong", "lamdong"],
+    },
+
     vip: { type: Boolean, default: false },
-    direction: {
-      type: String,
-      default: "",
-      enum: [
-        "east",
-        "west",
-        "south",
-        "north",
-        "east-north",
-        "east-south",
-        "west-north",
-        "west-south",
-      ],
-    },
-    process: {
-      type: String,
-      enum: ["pending", "accepted", "declined"],
-      default: "pending",
-    },
+
     price: { type: String, required: true },
-    acreage: { type: String, required: true },
+    bedroom: { type: String },
+    toilet: { type: String },
+    isSoldOut: { type: Boolean, default: false, select: false },
     isDeleted: { type: Boolean, default: false, select: false },
+
     reactions: { heart: { type: Number, required: false, default: 0 } },
+
+    videoYoutube: { type: String },
+    videoFacebook: { type: String },
+    videoTiktok: { type: String },
+    googleMapLocation: { type: String, required: true },
+
+    contact_name: { type: String, required: true },
+    contact_phoneNumber: { type: String, required: true },
   },
   { timestamps: true }
 );
