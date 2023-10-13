@@ -122,25 +122,25 @@ userController.deletePostFromFavoriteList = catchAsync(
   }
 );
 
-userController.verifyEmail = async (req, res, next) => {
-  const { token } = req.params;
+// userController.verifyEmail = async (req, res, next) => {
+//   const { token } = req.params;
 
-  try {
-    const decodedToken = jwt.verify(token, JWT_SECRET_KEY);
-    const userId = decodedToken.userId;
+//   try {
+//     const decodedToken = jwt.verify(token, JWT_SECRET_KEY);
+//     const userId = decodedToken.userId;
 
-    // Tìm và cập nhật trạng thái xác thực của người dùng
-    const user = await User.findByIdAndUpdate(userId, { isVerified: true });
+//     // Tìm và cập nhật trạng thái xác thực của người dùng
+//     const user = await User.findByIdAndUpdate(userId, { isVerified: true });
 
-    if (!user) {
-      throw new AppError(400, "Verify Error", "User not found");
-    }
+//     if (!user) {
+//       throw new AppError(400, "Verify Error", "User not found");
+//     }
 
-    return sendResponse(res, 200, true, null, null, "Verify Email successful");
-  } catch (error) {
-    return next(new AppError(400, "Verify Error", "Invalid Token"));
-  }
-};
+//     return sendResponse(res, 200, true, null, null, "Verify Email successful");
+//   } catch (error) {
+//     return next(new AppError(400, "Verify Error", "Invalid Token"));
+//   }
+// };
 
 userController.changePassword = catchAsync(async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
@@ -190,6 +190,115 @@ userController.getCurrentUser = catchAsync(async (req, res, next) => {
     user,
     null,
     "Get Current User Successful"
+  );
+});
+
+userController.updateCurrentUser = catchAsync(async (req, res, next) => {
+  const currentUserId = req.userId;
+  let user = await User.findById(currentUserId);
+  let allows = ["name", "phoneNumber", "email"];
+  allows.forEach((field) => {
+    if (req.body[field] !== undefined) {
+      user[field] = req.body[field];
+    }
+  });
+  await user.save();
+  return sendResponse(
+    res,
+    200,
+    true,
+    user,
+    null,
+    "Updated Current User Success"
+  );
+});
+
+userController.getAllUsersByAdmin = catchAsync(async (req, res, next) => {
+  let { page, limit } = req.query;
+  page = parseInt(page) || 1;
+  limit = parseInt(limit) || 20;
+
+  const filterConditions = [{ isDeleted: false }];
+  const filterCriteria = filterConditions.length
+    ? { $and: filterConditions }
+    : {};
+
+  const count = await User.countDocuments(filterCriteria);
+  const totalPages = Math.ceil(count / limit);
+  const offset = limit * (page - 1);
+
+  let users = await User.find(filterCriteria)
+    .sort({ createdAt: -1 })
+    .skip(offset)
+    .limit(limit);
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    { users, totalPages, count },
+    null,
+    "Get All Users By Admin Success"
+  );
+});
+
+userController.getSingleUserByAdmin = catchAsync(async (req, res, next) => {
+  const userId = req.params.userId;
+  const user = await User.findById(userId);
+  if (!user)
+    throw new AppError(400, "User not found", "Get Single User By Admin Error");
+  return sendResponse(
+    res,
+    200,
+    true,
+    user,
+    null,
+    "Get Single User By Admin Success"
+  );
+});
+
+userController.updateSingleUserByAdmin = catchAsync(async (req, res, next) => {
+  const userId = req.params.userId;
+  let user = await User.findById(userId);
+  if (!user)
+    throw new AppError(
+      400,
+      "User not found",
+      "Update Single User By Admin Error"
+    );
+  const allows = ["name", "email", "phoneNumber", "role"];
+  allows.forEach((field) => {
+    if (req.body[field] !== undefined) {
+      user[field] = req.body[field];
+    }
+  });
+  await user.save();
+  return sendResponse(
+    res,
+    200,
+    true,
+    user,
+    null,
+    "Updated Single User By Admin Success"
+  );
+});
+
+userController.deleteSingleUserByAdmin = catchAsync(async (req, res, next) => {
+  const userId = req.params.userId;
+  let user = await User.findByIdAndUpdate(
+    { _id: userId },
+    { isDeleted: true },
+    { new: true }
+  );
+  if (!user)
+    throw new AppError(400, "User not found", "Deleted User By Admin Error");
+  return sendResponse(
+    res,
+    200,
+    true,
+    user,
+    null,
+    "Delete User By Admin Success"
   );
 });
 

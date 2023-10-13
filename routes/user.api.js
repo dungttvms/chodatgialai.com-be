@@ -26,23 +26,6 @@ router.post(
 );
 
 /**
- * @route PUT /users/changePassword
- * @description Change Password
- * @body {oldPassword, newPassword}
- * @access Login required
- */
-
-router.put(
-  "/changePassword",
-  authentication.loginRequired,
-  validators.validate([
-    body("oldPassword", "Invalid Old Password").exists().notEmpty(),
-    body("newPassword", "Invalid New Password").exists().notEmpty(),
-  ]),
-  userController.changePassword
-);
-
-/**
  * @route POST /users/me/:postId
  * @description Add Favorite Post to List
  * @body {postId}
@@ -61,7 +44,6 @@ router.post(
 /**
  * @route DELETE /users/me/:postId
  * @description remove a post from favorite List
- * @body {postId}
  * @access Login required
  */
 
@@ -72,12 +54,21 @@ router.delete(
 );
 
 /**
- * @route GET /users/verify-email/:accessToken
- * @description
- * @require
- *
+ * @route PUT /users/changePassword
+ * @description Change Password
+ * @body {oldPassword, newPassword}
+ * @access Login required
  */
-router.get("/verify-email/:token", userController.verifyEmail);
+
+router.put(
+  "/changePassword",
+  authentication.loginRequired,
+  validators.validate([
+    body("oldPassword", "Invalid Old Password").exists().notEmpty(),
+    body("newPassword", "Invalid New Password").exists().notEmpty(),
+  ]),
+  userController.changePassword
+);
 
 /**
  * @route GET /users/me
@@ -87,10 +78,70 @@ router.get("/verify-email/:token", userController.verifyEmail);
 router.get("/me", authentication.loginRequired, userController.getCurrentUser);
 
 /**
+ * @route PUT /users/me
+ * @description Update Current User
+ * @body {name, email, phoneNumber}
+ * @access Login required
+ */
+router.put(
+  "/me",
+  authentication.loginRequired,
+  userController.updateCurrentUser
+);
+
+/**
  * @route GET /users
  * @description Load All User
- * @access Login required, administrator
+ * @access Admin
  */
-router.get("/", authentication.loginRequired);
+router.get(
+  "/",
+  authentication.adminRequired,
+  userController.getAllUsersByAdmin
+);
+
+/**
+ * @route GET /users/:userId
+ * @description Get Single User by Admin
+ * @access Admin
+ */
+
+router.get(
+  "/:userId",
+  authentication.adminRequired,
+  validators.validate([
+    param("userId").exists().isString().custom(validators.checkObjectId),
+  ]),
+  userController.getSingleUserByAdmin
+);
+
+/**
+ * @route PUT /users/:userId
+ * @description Update Single User By Admin
+ * @body {name, Email, phoneNumber, role}
+ * @access Admin
+ */
+router.put(
+  "/:userId",
+  authentication.adminRequired,
+  validators.validate([
+    param("userId").exists().isString().custom(validators.checkObjectId),
+  ]),
+  userController.updateSingleUserByAdmin
+);
+
+/**
+ * @route DELETE /users/:userId
+ * @description Delete Single User
+ * @access Admin
+ */
+router.delete(
+  "/:userId",
+  authentication.adminRequired,
+  validators.validate([
+    param("userId").exists().isString().custom(validators.checkObjectId),
+  ]),
+  userController.deleteSingleUserByAdmin
+);
 
 module.exports = router;
