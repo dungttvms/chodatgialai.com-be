@@ -7,7 +7,7 @@ const blogSchema = Schema(
     type: {
       type: String,
       required: true,
-      enum: ["news", "feng_shui", "experience", "nice_house"],
+      enum: ["Tin tức", "Phong thủy", "Kinh nghiệm", "Nhà đẹp"],
     },
     imageCover: { type: String, required: true },
     descriptionTitle: { type: String, required: true },
@@ -17,6 +17,7 @@ const blogSchema = Schema(
       required: false,
       ref: "User",
     },
+    readCount: { type: Number, required: false, default: 0 },
     isDeleted: { type: Boolean, default: false, select: false },
   },
   { timestamps: true }

@@ -80,7 +80,7 @@ router.get("/me", authentication.loginRequired, userController.getCurrentUser);
 /**
  * @route PUT /users/me
  * @description Update Current User
- * @body {name, email, phoneNumber}
+ * @body {name, avatar, phoneNumber}
  * @access Login required
  */
 router.put(
@@ -90,12 +90,12 @@ router.put(
 );
 
 /**
- * @route GET /users
+ * @route GET /users/admin
  * @description Load All User
  * @access Admin
  */
 router.get(
-  "/",
+  "/admin",
   authentication.adminRequired,
   userController.getAllUsersByAdmin
 );
@@ -107,7 +107,7 @@ router.get(
  */
 
 router.get(
-  "/:userId",
+  "/admin/:userId",
   authentication.adminRequired,
   validators.validate([
     param("userId").exists().isString().custom(validators.checkObjectId),
@@ -122,7 +122,7 @@ router.get(
  * @access Admin
  */
 router.put(
-  "/:userId",
+  "/admin/:userId",
   authentication.adminRequired,
   validators.validate([
     param("userId").exists().isString().custom(validators.checkObjectId),
@@ -131,12 +131,12 @@ router.put(
 );
 
 /**
- * @route DELETE /users/:userId
+ * @route DELETE /users/admin/:userId
  * @description Delete Single User
  * @access Admin
  */
 router.delete(
-  "/:userId",
+  "/admin/:userId",
   authentication.adminRequired,
   validators.validate([
     param("userId").exists().isString().custom(validators.checkObjectId),

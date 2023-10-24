@@ -17,7 +17,7 @@ validators.validate = (validationArray) => async (req, res, next) => {
   return sendResponse(res, 500, false, null, { message }, "Validation Error");
 };
 
-//Check Id có đúng chuẩn Id của MongooDB không?
+//Check ID match ID of MongooDB form
 validators.checkObjectId = (paramId) => {
   if (!mongoose.Types.ObjectId.isValid(paramId)) {
     throw new Error("Invalid ObjectId");

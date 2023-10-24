@@ -2,7 +2,7 @@
 
 ### PROJECT DESCRIPTION
 
-chodatgialai.com is a website that allows users to create an account using their email, password, and phone number. Users can log in to their accounts using their registered email and password.
+chodattaynguyen.com is a website that allows users to create an account using their email, password, and phone number. Users can log in to their accounts using their registered email and password.
 
 The accounts created on this platform are solely intended for experimental purposes within the application and should not be used for any other purposes.
 
@@ -19,7 +19,7 @@ Administrators have the authority to delete or approve posts.
 ## Authentication
 
 - [x] As a user, I can register for a new account with my Username, Email, PhoneNumber and Password
-- [x] As a user, I can sign in with my Email and password or Phone and Password
+- [x] As a user, I can log in with my Email and password
 
 ## Users
 

@@ -32,11 +32,7 @@ userController.register = catchAsync(async (req, res, next) => {
   );
   user.verifyToken = verifyToken;
   await user.save();
-  await novu.subscribers.identify(user._id, {
-    email: user.email,
-    phone: user.phoneNumber,
-    avatar: user.avatar,
-  });
+
   const accessToken = await user.generateToken();
   return sendResponse(
     res,
@@ -148,7 +144,7 @@ userController.changePassword = catchAsync(async (req, res, next) => {
   const userId = req.params._id;
 
   let user = await User.findOne({ userId }, "+password");
-
+  console.log("USER:", user);
   if (!user)
     throw new AppError(400, "Invalid Credentials", "Change Password Error");
   if (user.isGoogleAuth === true) {
@@ -158,6 +154,7 @@ userController.changePassword = catchAsync(async (req, res, next) => {
       "Change Password Error"
     );
   }
+  console.log("Google Authentication", user.isGoogleAuth);
   const salt = await bcrypt.genSalt(10);
 
   const hashedNewPassword = await bcrypt.hash(newPassword, salt);
@@ -196,7 +193,7 @@ userController.getCurrentUser = catchAsync(async (req, res, next) => {
 userController.updateCurrentUser = catchAsync(async (req, res, next) => {
   const currentUserId = req.userId;
   let user = await User.findById(currentUserId);
-  let allows = ["name", "phoneNumber", "email"];
+  let allows = ["name", "phoneNumber", "avatar"];
   allows.forEach((field) => {
     if (req.body[field] !== undefined) {
       user[field] = req.body[field];
@@ -214,11 +211,14 @@ userController.updateCurrentUser = catchAsync(async (req, res, next) => {
 });
 
 userController.getAllUsersByAdmin = catchAsync(async (req, res, next) => {
-  let { page, limit } = req.query;
+  let { page, limit, filterByField } = req.query;
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 20;
-
   const filterConditions = [{ isDeleted: false }];
+
+  if (filterByField) {
+    filterConditions.push({ [filterByField]: req.query[filterByField] });
+  }
   const filterCriteria = filterConditions.length
     ? { $and: filterConditions }
     : {};
@@ -266,7 +266,7 @@ userController.updateSingleUserByAdmin = catchAsync(async (req, res, next) => {
       "User not found",
       "Update Single User By Admin Error"
     );
-  const allows = ["name", "email", "phoneNumber", "role"];
+  const allows = ["name", "phoneNumber", "role"];
   allows.forEach((field) => {
     if (req.body[field] !== undefined) {
       user[field] = req.body[field];

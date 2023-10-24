@@ -20,7 +20,7 @@ router.post(
     body("type", "Invalid Type")
       .exists()
       .notEmpty()
-      .isIn(["news", "feng_shui", "experience", "nice_house"]),
+      .isIn(["Tin tức", "Phong thủy", "Kinh nghiệm", "Nhà đẹp"]),
     body("imageCover", "Invalid ImageCover").exists().notEmpty(),
     body("descriptionTitle", "Invalid DescriptionTitle").exists().notEmpty(),
     body("descriptionDetail", "Invalid DescriptionDetail").exists().notEmpty(),

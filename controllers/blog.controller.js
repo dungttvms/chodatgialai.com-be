@@ -15,7 +15,7 @@ blogController.createNewBlog = catchAsync(async (req, res, next) => {
     descriptionDetail,
     author: currentUserId,
   });
-  blog = await blog.populate("author").execPopulate();
+  blog = await blog.populate("author");
   return sendResponse(res, 200, true, blog, null, "Created Blog Success");
 });
 
@@ -51,6 +51,7 @@ blogController.getAllBlogs = catchAsync(async (req, res, next) => {
 
 blogController.getSingleBlog = catchAsync(async (req, res, next) => {
   const blogId = req.params.blogId;
+  await Blog.findByIdAndUpdate(blogId, { $inc: { readCount: 1 } });
 
   const blog = await Blog.findById(blogId);
   if (!blog)
@@ -90,7 +91,7 @@ blogController.updateSingleBlog = catchAsync(async (req, res, next) => {
 blogController.deleteSingleBlog = catchAsync(async (req, res, next) => {
   const blogId = req.params.blogId;
   let blog = await Blog.findByIdAndUpdate(
-    { _id: postId },
+    { _id: blogId },
     { isDeleted: true },
     { new: true }
   );

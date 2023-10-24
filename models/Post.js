@@ -14,8 +14,8 @@ const postSchema = Schema(
     status: {
       type: String,
       required: true,
-      enum: ["on_sale", "sold_out"],
-      default: "on_sale",
+      enum: ["Đang bán", "Đã bán"],
+      default: "Đang bán",
     },
 
     author: {
@@ -35,7 +35,7 @@ const postSchema = Schema(
     province: {
       type: String,
       required: true,
-      enum: ["kontum", "gialai", "daklak", "daknong", "lamdong"],
+      enum: ["Kon Tum", "Gia Lai", "Đăk Lăk", "Đăk Nông", "Lâm Đồng"],
     },
 
     vip: { type: Boolean, default: false },
@@ -55,6 +55,8 @@ const postSchema = Schema(
 
     contact_name: { type: String, required: true },
     contact_phoneNumber: { type: String, required: true },
+
+    viewsCount: { type: Number, required: false, default: 0 },
   },
   { timestamps: true }
 );

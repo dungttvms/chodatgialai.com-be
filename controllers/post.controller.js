@@ -13,7 +13,7 @@ const calculatePostCount = async (userId) => {
 postController.createNewPost = catchAsync(async (req, res, next) => {
   const currentUserId = req.userId;
 
-  let {
+  const {
     title,
     address,
     acreage,
@@ -49,9 +49,9 @@ postController.createNewPost = catchAsync(async (req, res, next) => {
     status,
     type,
     description,
+    province,
     images,
     legal_images,
-    province,
     price,
     toilet,
     bedroom,
@@ -64,20 +64,60 @@ postController.createNewPost = catchAsync(async (req, res, next) => {
 
     author: currentUserId,
   });
+
+  post = await post.populate("author");
   await calculatePostCount(currentUserId);
-  post = await post.populate("author").execPopulate();
+
   return sendResponse(res, 200, true, post, null, "Created Post Success");
 });
 
+// postController.getAllPosts = catchAsync(async (req, res, next) => {
+//   let { page, limit, filterByField } = req.query;
+
+//   page = parseInt(page) || 1;
+//   limit = parseInt(limit) || 10;
+//   const filterConditions = [{ isDeleted: false }];
+
+//   if (filterByField) {
+//     filterConditions.push({ [filterByField]: req.query[filterByField] });
+//   }
+
+//   const filterCriteria = filterConditions.length
+//     ? { $and: filterConditions }
+//     : {};
+
+//   const count = await Post.countDocuments(filterCriteria);
+//   const totalPages = Math.ceil(count / limit);
+//   const offset = limit * (page - 1);
+
+//   let posts = await Post.find(filterCriteria)
+//     .sort({ createdAt: -1 })
+//     .skip(offset)
+//     .limit(limit);
+
+//   return sendResponse(
+//     res,
+//     200,
+//     true,
+//     { posts, totalPages, count },
+//     null,
+//     "Get All Posts Successful"
+//   );
+// });
+
 postController.getAllPosts = catchAsync(async (req, res, next) => {
-  let { page, limit, province } = req.query;
+  let { page, limit, filterByField } = req.query;
 
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 10;
   const filterConditions = [{ isDeleted: false }];
 
-  if (province) {
-    filterConditions.push({ province: province });
+  if (filterByField) {
+    const searchValue = req.query[filterByField].toLowerCase();
+
+    filterConditions.push({
+      [filterByField]: { $regex: new RegExp(searchValue, "i") },
+    });
   }
 
   const filterCriteria = filterConditions.length
@@ -105,6 +145,7 @@ postController.getAllPosts = catchAsync(async (req, res, next) => {
 
 postController.getSinglePost = catchAsync(async (req, res, next) => {
   const postId = req.params.postId;
+  await Post.findByIdAndUpdate(postId, { $inc: { viewsCount: 1 } });
 
   const post = await Post.findById(postId);
   if (!post) throw new AppError(400, "Post not found", "Get Single Post Error");
@@ -120,11 +161,12 @@ postController.updateSinglePost = catchAsync(async (req, res, next) => {
     "title",
     "address",
     "acreage",
-    " length",
+    "length",
     "width",
     "legal",
     "type",
     "description",
+    "direction",
     "images",
     "legal_images",
     "province",

@@ -28,7 +28,7 @@ router.post(
     body("province", "Invalid Province")
       .exists()
       .notEmpty()
-      .isIn(["kontum", "gialai", "daklak", "daknong", "lamdong"]),
+      .isIn(["Kon Tum", "Gia Lai", "Đăk Lăk", "Đăk Nông", "Lâm Đồng"]),
 
     body("price", "Invalid price").exists().notEmpty().isString(),
     body("googleMapLocation", "Invalid Google Map Location")
@@ -40,7 +40,7 @@ router.post(
 );
 
 /**
- * @route GET /posts?page=1&limit=10
+ * @route GET /posts?page=1&limit=10$&query={value}
  * @description Get All Posts
  * @access Public
  */
