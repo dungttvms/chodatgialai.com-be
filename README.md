@@ -32,15 +32,13 @@ Administrators have the right to delete or approve posts and users
 
 - [x] As a user, I can read a post detail
 - [x] As a user, I can read a blog detail
-- [x] As a user, I can share post/blog on my facebook and add posts to my favorite Post List
+- [x] As a user, I can share post/blog on my facebook and add posts/remove Posts to my favorite Post List
 - [x] As a user, I can update my profile (avatar, name and phoneNumber)
 - [x] As a user login without Google Account, I can update my password
 
 ## Administrator
 
-- [x] As an admin, I can control All Users, All Posts and All Blogs on ControlPanel Page
+- [x] As an admin, I can control All Users, All Posts and All Blogs in ControlPanel Page
 - [x] As an admin, I can create a new Post/Blog
 - [x] As an admin, I can update/delete all posts/blogs
 - [x] As an admin, I can update/delete client user
-
-### API ENDPOINTS

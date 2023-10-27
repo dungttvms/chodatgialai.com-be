@@ -25,4 +25,8 @@ router.use("/oauth", oauth);
 const emailApi = require("./email.api");
 router.use("/emails", emailApi);
 
+//chatBot API
+const chatBotApi = require("./chatBot.api");
+router.use("/chatBots", chatBotApi);
+
 module.exports = router;

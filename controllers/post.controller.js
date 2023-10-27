@@ -71,40 +71,6 @@ postController.createNewPost = catchAsync(async (req, res, next) => {
   return sendResponse(res, 200, true, post, null, "Created Post Success");
 });
 
-// postController.getAllPosts = catchAsync(async (req, res, next) => {
-//   let { page, limit, filterByField } = req.query;
-
-//   page = parseInt(page) || 1;
-//   limit = parseInt(limit) || 10;
-//   const filterConditions = [{ isDeleted: false }];
-
-//   if (filterByField) {
-//     filterConditions.push({ [filterByField]: req.query[filterByField] });
-//   }
-
-//   const filterCriteria = filterConditions.length
-//     ? { $and: filterConditions }
-//     : {};
-
-//   const count = await Post.countDocuments(filterCriteria);
-//   const totalPages = Math.ceil(count / limit);
-//   const offset = limit * (page - 1);
-
-//   let posts = await Post.find(filterCriteria)
-//     .sort({ createdAt: -1 })
-//     .skip(offset)
-//     .limit(limit);
-
-//   return sendResponse(
-//     res,
-//     200,
-//     true,
-//     { posts, totalPages, count },
-//     null,
-//     "Get All Posts Successful"
-//   );
-// });
-
 postController.getAllPosts = catchAsync(async (req, res, next) => {
   let { page, limit, filterByField } = req.query;
 
