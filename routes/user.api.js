@@ -122,10 +122,10 @@ router.get(
  * @access Admin
  */
 router.put(
-  "/admin/:userId",
+  "/admin/:targetUserId",
   authentication.adminRequired,
   validators.validate([
-    param("userId").exists().isString().custom(validators.checkObjectId),
+    param("targetUserId").exists().isString().custom(validators.checkObjectId),
   ]),
   userController.updateSingleUserByAdmin
 );

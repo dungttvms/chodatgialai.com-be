@@ -7,7 +7,6 @@ validators.validate = (validationArray) => async (req, res, next) => {
   await Promise.all(validationArray.map((validation) => validation.run(req)));
   const errors = validationResult(req);
 
-  // console.log("Errors", errors);
   if (errors.isEmpty()) return next();
 
   const message = errors

@@ -9,7 +9,7 @@ const userController = {};
 
 userController.register = catchAsync(async (req, res, next) => {
   const { name, phoneNumber, email, password } = req.body;
-  console.log(password);
+
   let user = await User.findOne({ $or: [{ email }, { phoneNumber }] });
   if (user) {
     throw new AppError(400, "User already exists", "Created User error");
@@ -144,7 +144,7 @@ userController.changePassword = catchAsync(async (req, res, next) => {
   const userId = req.params._id;
 
   let user = await User.findOne({ userId }, "+password");
-  console.log("USER:", user);
+
   if (!user)
     throw new AppError(400, "Invalid Credentials", "Change Password Error");
   if (user.isGoogleAuth === true) {
@@ -154,7 +154,7 @@ userController.changePassword = catchAsync(async (req, res, next) => {
       "Change Password Error"
     );
   }
-  console.log("Google Authentication", user.isGoogleAuth);
+
   const salt = await bcrypt.genSalt(10);
 
   const hashedNewPassword = await bcrypt.hash(newPassword, salt);
@@ -258,9 +258,10 @@ userController.getSingleUserByAdmin = catchAsync(async (req, res, next) => {
 });
 
 userController.updateSingleUserByAdmin = catchAsync(async (req, res, next) => {
-  const userId = req.params.userId;
-  let user = await User.findById(userId);
-  if (!user)
+  const targetUserId = req.body.id;
+
+  let targetUser = await User.findById(targetUserId);
+  if (!targetUser)
     throw new AppError(
       400,
       "User not found",
@@ -269,15 +270,15 @@ userController.updateSingleUserByAdmin = catchAsync(async (req, res, next) => {
   const allows = ["name", "phoneNumber", "role"];
   allows.forEach((field) => {
     if (req.body[field] !== undefined) {
-      user[field] = req.body[field];
+      targetUser[field] = req.body[field];
     }
   });
-  await user.save();
+  await targetUser.save();
   return sendResponse(
     res,
     200,
     true,
-    user,
+    targetUser,
     null,
     "Updated Single User By Admin Success"
   );

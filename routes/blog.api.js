@@ -78,4 +78,15 @@ router.delete(
   blogController.deleteSingleBlog
 );
 
+/**
+ * @route GET /blogs/blog/:type
+ * @description Get Filter Blogs
+ * @access Public
+ */
+router.get(
+  "/blog/:type",
+  validators.validate([param("type").isString().exists()]),
+  blogController.getFilteredBlogs
+);
+
 module.exports = router;

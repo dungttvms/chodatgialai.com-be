@@ -47,6 +47,18 @@ router.post(
 router.get("/", postController.getAllPosts);
 
 /**
+ * @route GET /posts/province/:province
+ * @description Get Filter Post By Province
+ * @access Public
+ */
+
+router.get(
+  "/province/:province",
+  validators.validate([param("province").isString().exists()]),
+  postController.getPostsFilterByProvince
+);
+
+/**
  * @route GET /posts/:postId
  * @description Get Single Post
  * @access Login required

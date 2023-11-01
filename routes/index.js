@@ -29,4 +29,8 @@ router.use("/emails", emailApi);
 const chatBotApi = require("./chatBot.api");
 router.use("/chatBots", chatBotApi);
 
+//viewerCount API
+const viewerCountApi = require("./viewerCount.api");
+router.use("/viewerCounts", viewerCountApi);
+
 module.exports = router;

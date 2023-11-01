@@ -108,4 +108,36 @@ blogController.deleteSingleBlog = catchAsync(async (req, res, next) => {
   );
 });
 
+blogController.getFilteredBlogs = catchAsync(async (req, res, next) => {
+  let { page, limit } = req.query;
+  const filterType = req.params.type;
+  const type = filterType;
+
+  page = parseInt(page) || 1;
+  limit = parseInt(limit) || 10;
+  const filterConditions = [{ isDeleted: false, type: type }];
+
+  const filterCriteria = filterConditions.length
+    ? { $and: filterConditions }
+    : {};
+
+  const count = await Blog.countDocuments(filterCriteria);
+  const totalPages = Math.ceil(count / limit);
+  const offset = limit * (page - 1);
+
+  let filteredBlogs = await Blog.find(filterCriteria)
+    .sort({ createdAt: -1 })
+    .skip(offset)
+    .limit(limit);
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    { filteredBlogs, totalPages, count },
+    null,
+    "Get Filtered Blogs Successful"
+  );
+});
+
 module.exports = blogController;

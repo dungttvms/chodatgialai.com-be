@@ -42,7 +42,7 @@ chatBotController.getChatBot = catchAsync(async (req, res, next) => {
 
 chatBotController.deleteChatBot = catchAsync(async (req, res, next) => {
   const chatBotId = req.params.chatBotId;
-  console.log(req.params);
+
   let chatBot = await dataChatBot.findByIdAndUpdate(
     { _id: chatBotId },
     { isDeleted: true },
