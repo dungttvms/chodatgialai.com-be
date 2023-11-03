@@ -120,7 +120,6 @@ postController.getSinglePost = catchAsync(async (req, res, next) => {
 postController.updateSinglePost = catchAsync(async (req, res, next) => {
   const postId = req.params.postId;
   const dataOfChange = req.body;
-  console.log(dataOfChange);
   let post = await Post.findById(postId);
   if (!post) throw new AppError(400, "Post not found", "Updated Post error");
 
