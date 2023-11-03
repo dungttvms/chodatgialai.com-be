@@ -100,4 +100,20 @@ router.delete(
   ]),
   postController.deleteSinglePost
 );
+
+/**
+ * @route GET /posts/me/favoritePosts
+ * @description Get favoritePost List
+ * @access Login required
+ */
+
+router.get(
+  "/:userId/favoritePosts",
+  authentication.adminRequired,
+  validators.validate([
+    param("userId").exists().isString().custom(validators.checkObjectId),
+  ]),
+  postController.getFavoritePosts
+);
+
 module.exports = router;

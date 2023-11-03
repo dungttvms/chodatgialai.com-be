@@ -1,3 +1,4 @@
+const { post } = require("../app");
 const { catchAsync, sendResponse, AppError } = require("../helpers/utils");
 const Post = require("../models/Post");
 const User = require("../models/User");
@@ -118,6 +119,8 @@ postController.getSinglePost = catchAsync(async (req, res, next) => {
 
 postController.updateSinglePost = catchAsync(async (req, res, next) => {
   const postId = req.params.postId;
+  const dataOfChange = req.body;
+  console.log(dataOfChange);
   let post = await Post.findById(postId);
   if (!post) throw new AppError(400, "Post not found", "Updated Post error");
 
@@ -144,7 +147,7 @@ postController.updateSinglePost = catchAsync(async (req, res, next) => {
     "isSoldOut",
   ];
   allows.forEach((field) => {
-    if (req.body[field] !== undefined) {
+    if (req.body[field] !== undefined && req.body[field] !== "") {
       post[field] = req.body[field];
     }
   });
@@ -208,4 +211,25 @@ postController.getPostsFilterByProvince = catchAsync(async (req, res, next) => {
     "Get Filtered Province Posts Successful"
   );
 });
+
+postController.getFavoritePosts = catchAsync(async (req, res, next) => {
+  const userId = req.params.userId;
+
+  // Lấy danh sách các ID của các bài đăng yêu thích từ trường favoriteList của người dùng
+  const user = await User.findById(userId).select("favoritePostList");
+  const favoritePostIds = user.favoritePostList;
+
+  // Sử dụng các ID này để tìm các bài đăng
+  const favoritePosts = await Post.find({ _id: { $in: favoritePostIds } });
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    favoritePosts,
+    null,
+    "Get Favorite Posts Successful"
+  );
+});
+
 module.exports = postController;
