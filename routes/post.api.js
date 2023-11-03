@@ -75,7 +75,28 @@ router.get(
 /**
  * @route PUT /posts/:postId
  * @description Update a Post
- * @body {title, description, type, images, author, district, address, direction, price}
+ * @body { title,
+  address,
+  acreage,
+  length,
+  width,
+  legal,
+  status,
+  type,
+  description,
+  images,
+  legal_images,
+  province,
+  direction,
+  price,
+  toilet,
+  bedroom,
+  videoYoutube,
+  videoFacebook,
+  videoTiktok,
+  googleMapLocation,
+  contact_name,
+  contact_phoneNumber,}
  * @access Admin required
  */
 router.put(
