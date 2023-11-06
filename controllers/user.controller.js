@@ -269,7 +269,7 @@ userController.updateSingleUserByAdmin = catchAsync(async (req, res, next) => {
     );
   const allows = ["name", "phoneNumber", "role"];
   allows.forEach((field) => {
-    if (req.body[field] !== undefined) {
+    if (req.body[field] !== undefined && req.body[field] !== "") {
       targetUser[field] = req.body[field];
     }
   });
