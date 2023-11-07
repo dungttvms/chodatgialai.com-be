@@ -148,7 +148,7 @@ postController.updateSinglePost = catchAsync(async (req, res, next) => {
   allows.forEach((field) => {
     if (
       req.body[field] !== undefined &&
-      req.body[field].trim() !== "" &&
+      req.body[field] !== "" &&
       req.body[field].length > 0
     ) {
       post[field] = req.body[field];
