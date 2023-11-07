@@ -26,7 +26,7 @@ Administrators have the right to delete or approve posts and users
 
 - [x] As a user, I can see All Posts and All Blogs
 - [x] As a user, I can use ChatBot and call to Hotline Phone Number
-- [x] As a user, I can see the view of this website
+- [x] As a user, I can see the viewers counter of this website
 - [x] As a user, I can read about introduce, regulation and address of ChodatTayNguyen.com
 
 ## User Login
@@ -40,6 +40,14 @@ Administrators have the right to delete or approve posts and users
 ## Administrator
 
 - [x] As an admin, I can control All Users, All Posts and All Blogs in ControlPanel Page
+- [x] As an admin, I can collect user information (name, phone Number, favorite location, frequency access...) from ChatBot and ip address,
+- [x] As an admin, I can control (CRUD) All Posts and All Blogs in ControlPanel Page
 - [x] As an admin, I can create a new Post/Blog
 - [x] As an admin, I can update(all fields)/delete all posts
 - [x] As an admin, I can update(role)/delete client user
+
+### Next steps
+
+- [ ] Build create/update blog Page, using tinymce/wysiwyg
+- [ ] Using MongoDB create real estate data (post/blogs)
+- [ ] Build search feature (province/district or price/acreage...)
