@@ -119,7 +119,7 @@ postController.getSinglePost = catchAsync(async (req, res, next) => {
 
 postController.updateSinglePost = catchAsync(async (req, res, next) => {
   const postId = req.params.postId;
-  const dataOfChange = req.body;
+
   let post = await Post.findById(postId);
   if (!post) throw new AppError(400, "Post not found", "Updated Post error");
 
@@ -146,7 +146,11 @@ postController.updateSinglePost = catchAsync(async (req, res, next) => {
     "isSoldOut",
   ];
   allows.forEach((field) => {
-    if (req.body[field] !== undefined && req.body[field] !== "") {
+    if (
+      req.body[field] !== undefined &&
+      req.body[field].trim() !== "" &&
+      req.body[field].length > 0
+    ) {
       post[field] = req.body[field];
     }
   });
