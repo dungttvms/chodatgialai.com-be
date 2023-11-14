@@ -1,4 +1,3 @@
-const { post } = require("../app");
 const { catchAsync, sendResponse, AppError } = require("../helpers/utils");
 const Post = require("../models/Post");
 const User = require("../models/User");

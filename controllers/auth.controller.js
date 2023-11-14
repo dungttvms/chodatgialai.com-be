@@ -64,8 +64,7 @@ authController.loginWithGoogle = catchAsync(async (req, res, next) => {
       "Login with Google successful"
     );
   } catch (error) {
-    // Handle errors here
-    return next(error); // Use next to pass the error to the error handling middleware
+    return next(error);
   }
 });
 
