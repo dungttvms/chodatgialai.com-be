@@ -141,6 +141,7 @@ postController.updateSinglePost = catchAsync(async (req, res, next) => {
     "videoYoutube",
     "videoTiktok",
     "contact_name",
+    "contact_email",
     "contact_phoneNumber",
     "isSoldOut",
   ];
