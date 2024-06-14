@@ -185,22 +185,21 @@ postController.deleteSinglePost = catchAsync(async (req, res, next) => {
 
 postController.getPostsFilterByProvince = catchAsync(async (req, res, next) => {
   let { page, limit } = req.query;
-  const filterProvince = req.params.province;
-  const province = filterProvince;
+  const province = req.params.province;
 
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 10;
-  const filterConditions = [{ isDeleted: false, province: province }];
 
-  const filterCriteria = filterConditions.length
-    ? { $and: filterConditions }
-    : {};
+  const filterCriteria = {
+    isDeleted: false,
+    province: province,
+  };
 
   const count = await Post.countDocuments(filterCriteria);
   const totalPages = Math.ceil(count / limit);
   const offset = limit * (page - 1);
 
-  let filteredPosts = await Post.find(filterCriteria)
+  const filteredPosts = await Post.find(filterCriteria)
     .sort({ createdAt: -1 })
     .skip(offset)
     .limit(limit);

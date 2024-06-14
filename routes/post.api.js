@@ -61,7 +61,7 @@ router.get(
 /**
  * @route GET /posts/:postId
  * @description Get Single Post
- * @access Login required
+ * @access Public
  */
 
 router.get(
@@ -103,7 +103,7 @@ router.put(
   "/:postId",
   authentication.adminRequired,
   validators.validate([
-    param("postId").exists().isString().custom(validators.checkObjectId),
+    param("postId").isString().custom(validators.checkObjectId),
   ]),
   postController.updateSinglePost
 );

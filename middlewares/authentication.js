@@ -6,55 +6,65 @@ const User = require("../models/User");
 
 const authentication = {};
 
-authentication.loginRequired = (req, res, next) => {
-  try {
-    const tokenString = req.headers.authorization;
-
-    if (!tokenString)
-      throw new AppError(401, "Login Required", "Authentication Error");
-    const token = tokenString.replace("Bearer ", "");
+const verifyToken = (token) => {
+  return new Promise((resolve, reject) => {
     jwt.verify(token, JWT_SECRET_KEY, (err, payload) => {
       if (err) {
         if (err.name === "TokenExpiredError") {
-          throw new AppError(401, "Token Expired", "Authentication Error");
+          reject(new AppError(401, "Token Expired", "Authentication Error"));
         } else {
-          throw new AppError(401, "Token is invalid", "Authentication Error");
+          reject(new AppError(401, "Token is invalid", "Authentication Error"));
         }
+      } else {
+        resolve(payload);
       }
-      req.userId = payload._id;
     });
+  });
+};
+
+authentication.loginRequired = async (req, res, next) => {
+  try {
+    const tokenString = req.headers.authorization;
+
+    if (!tokenString) {
+      return next(new AppError(401, "Login Required", "Authentication Error"));
+    }
+
+    const token = tokenString.replace("Bearer ", "").replace("JWT ", "");
+    const payload = await verifyToken(token);
+
+    req.userId = payload._id;
     next();
   } catch (error) {
     next(error);
   }
 };
 
-authentication.adminRequired = (req, res, next) => {
+authentication.adminRequired = async (req, res, next) => {
   try {
     const tokenString = req.headers.authorization;
-    if (!tokenString)
-      throw new AppError(401, "Login Required", "Authentication Error");
-    const token = tokenString.replace("Bearer ", "");
 
-    jwt.verify(token, JWT_SECRET_KEY, async (err, payload) => {
-      if (err) {
-        if (err.name === "TokenExpiredError") {
-          throw new AppError(401, "Token Expired", "Authentication Error");
-        } else {
-          throw new AppError(401, "Token is invalid", "Authentication Error");
-        }
-      }
+    if (!tokenString) {
+      return next(new AppError(401, "Login Required", "Authentication Error"));
+    }
 
-      // Check User Role
-      const user = await User.findById(payload._id);
+    const token = tokenString.replace("Bearer ", "").replace("JWT ", "");
+    const payload = await verifyToken(token);
 
-      if (user.role === "admin") {
-        req.userId = payload._id;
-        next();
-      } else {
-        throw new AppError(403, "Permission Denied", "Authentication Error");
-      }
-    });
+    const user = await User.findById(payload._id);
+
+    if (!user) {
+      return next(new AppError(404, "User not found", "Authentication Error"));
+    }
+
+    if (user.role === "admin") {
+      req.userId = payload._id;
+      next();
+    } else {
+      return next(
+        new AppError(403, "Permission Denied", "Authentication Error")
+      );
+    }
   } catch (error) {
     next(error);
   }

@@ -8,7 +8,7 @@ viewerCountController.getViewerCount = catchAsync(async (req, res, next) => {
   const ipAddress =
     req.headers["x-forwarded-for"] || req.connection.remoteAddress;
 
-  const existingViewer = await ViewerCount.findOne({ ipAddress });
+  const existingViewer = await ViewerCount.findOneAndUpdate({ ipAddress }); //note lại findOne
 
   if (existingViewer) {
     existingViewer.views++;

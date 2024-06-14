@@ -64,8 +64,8 @@ router.put(
   "/changePassword",
   authentication.loginRequired,
   validators.validate([
-    body("oldPassword", "Invalid Old Password").exists().notEmpty(),
-    body("newPassword", "Invalid New Password").exists().notEmpty(),
+    body("oldPassword", "Invalid Old Password").notEmpty(),
+    body("newPassword", "Invalid New Password").notEmpty(),
   ]),
   userController.changePassword
 );
@@ -125,7 +125,7 @@ router.put(
   "/admin/:targetUserId",
   authentication.adminRequired,
   validators.validate([
-    param("targetUserId").exists().isString().custom(validators.checkObjectId),
+    param("targetUserId").isString().custom(validators.checkObjectId),
   ]),
   userController.updateSingleUserByAdmin
 );

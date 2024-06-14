@@ -59,7 +59,7 @@ router.put(
   "/:blogId",
   authentication.adminRequired,
   validators.validate([
-    param("blogId").exists().isString().custom(validators.checkObjectId),
+    param("blogId").isString().custom(validators.checkObjectId),
   ]),
   blogController.updateSingleBlog
 );
