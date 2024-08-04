@@ -29,6 +29,10 @@ router.use("/emails", emailApi);
 const chatBotApi = require("./chatBot.api");
 router.use("/chatBots", chatBotApi);
 
+//PhimGiaLai API (Chatbot)
+const phimGiaLai = require("./phimGiaLai.api");
+router.use("/phimgialai", phimGiaLai);
+
 //viewerCount API
 const viewerCountApi = require("./viewerCount.api");
 router.use("/viewerCounts", viewerCountApi);
