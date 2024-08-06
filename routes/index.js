@@ -33,6 +33,10 @@ router.use("/chatBots", chatBotApi);
 const phimGiaLai = require("./phimGiaLai.api");
 router.use("/phimgialai", phimGiaLai);
 
+//movie requested API (Phim Gia Lai)
+const movieApi = require("./movie.api");
+router.use("/keywordMovie", movieApi);
+
 //viewerCount API
 const viewerCountApi = require("./viewerCount.api");
 router.use("/viewerCounts", viewerCountApi);
