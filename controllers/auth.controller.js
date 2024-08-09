@@ -1,5 +1,6 @@
 const { AppError, catchAsync, sendResponse } = require("../helpers/utils");
 const User = require("../models/User");
+const UserGiaLai = require("../models/UserGiaLai");
 const bcrypt = require("bcryptjs");
 
 const authController = {};
@@ -67,5 +68,39 @@ authController.loginWithGoogle = catchAsync(async (req, res, next) => {
     return next(error);
   }
 });
+authController.loginWithGooglePhimGiaLai = catchAsync(
+  async (req, res, next) => {
+    try {
+      const { email, name, picture } = req.body;
+
+      if (!email)
+        throw new AppError(400, "Email is required", "Login google Error");
+
+      let user = await UserGiaLai.findOne({ email });
+
+      if (!user) {
+        user = await UserGiaLai.create({
+          name: name,
+          email: email,
+          avatar: picture,
+          isGoogleAuth: true,
+        });
+      }
+
+      const accessToken = await user.generateToken();
+
+      return sendResponse(
+        res,
+        200,
+        true,
+        { user, accessToken },
+        null,
+        "Login with Google successful"
+      );
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
 
 module.exports = authController;

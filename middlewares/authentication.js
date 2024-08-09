@@ -1,9 +1,7 @@
 const jwt = require("jsonwebtoken");
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
-
 const { AppError } = require("../helpers/utils");
 const User = require("../models/User");
-
 const authentication = {};
 
 const verifyToken = (token) => {
@@ -34,6 +32,7 @@ authentication.loginRequired = async (req, res, next) => {
     const payload = await verifyToken(token);
 
     req.userId = payload._id;
+
     next();
   } catch (error) {
     next(error);

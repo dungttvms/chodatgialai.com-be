@@ -52,6 +52,10 @@ router.delete(
   authentication.loginRequired,
   userController.deletePostFromFavoriteList
 );
+/**
+
+
+
 
 /**
  * @route PUT /users/changePassword
@@ -142,6 +146,44 @@ router.delete(
     param("userId").exists().isString().custom(validators.checkObjectId),
   ]),
   userController.deleteSingleUserByAdmin
+);
+
+//===========================================
+/**
+ * @route GET /users/me/phimgialai
+ * @description Get current user info (Phim Gia Lai)
+ * @access Login required
+ */
+router.get(
+  "/me/phimgialai",
+  authentication.loginRequired,
+  userController.getCurrentUserGiaLai
+);
+/**
+ * @route POST /users/me/phimgialai/:movieId
+ * @description Add Favorite movie to List (Phim Gia Lai)
+ * @body {movieId}
+ * @access Login Required
+ */
+
+router.post(
+  "/me/phimgialai/:movieId",
+  authentication.loginRequired,
+  validators.validate([param("movieId").isString()]),
+  userController.addMovieToFavoriteList
+);
+
+/**
+ * @route DELETE /users/me/phimgialai/:movieId
+ * @description remove a movie from favorite List (Phim Gia Lai)
+ * @access Login required
+ */
+
+router.delete(
+  "/me/phimgialai/:movieId",
+  authentication.loginRequired,
+  validators.validate([param("movieId").exists().isString()]),
+  userController.deleteMovieFromFavoriteList
 );
 
 module.exports = router;

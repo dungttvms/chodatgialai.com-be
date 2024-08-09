@@ -1,41 +1,41 @@
 var express = require("express");
 var router = express.Router();
 
-//Auth API
-const authApi = require("./auth.api");
-router.use("/auth", authApi);
-
-//User API
-const userApi = require("./user.api");
-router.use("/users", userApi);
-
-//post API
-const postApi = require("./post.api");
-router.use("/posts", postApi);
-
 //blog API
 const blogApi = require("./blog.api");
 router.use("/blogs", blogApi);
-
-//OAuthAPI
-const oauth = require("./oauth.api");
-router.use("/oauth", oauth);
-
-//email API
-const emailApi = require("./email.api");
-router.use("/emails", emailApi);
 
 //chatBot API
 const chatBotApi = require("./chatBot.api");
 router.use("/chatBots", chatBotApi);
 
-//PhimGiaLai API (Chatbot)
+//email API
+const emailApi = require("./email.api");
+router.use("/emails", emailApi);
+
+//movie requested API (Phim Gia Lai, user searches keyword find movies)
+const movieApi = require("./movie.api");
+router.use("/keywordMovie", movieApi);
+
+//PhimGiaLai API (Chatbot data Phim Gia Lai)
 const phimGiaLai = require("./phimGiaLai.api");
 router.use("/phimgialai", phimGiaLai);
 
-//movie requested API (Phim Gia Lai)
-const movieApi = require("./movie.api");
-router.use("/keywordMovie", movieApi);
+//post API
+const postApi = require("./post.api");
+router.use("/posts", postApi);
+
+//User API
+const userApi = require("./user.api");
+router.use("/users", userApi);
+
+//Auth API
+const authApi = require("./auth.api");
+router.use("/auth", authApi);
+
+//OAuthAPI
+const oauth = require("./oauth.api");
+router.use("/oauth", oauth);
 
 //viewerCount API
 const viewerCountApi = require("./viewerCount.api");

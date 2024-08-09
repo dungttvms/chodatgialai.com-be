@@ -37,4 +37,15 @@ router.post(
   authController.loginWithGoogle
 );
 
+router.post(
+  "/loginPhimGiaLai",
+  validators.validate([
+    body("email")
+      .isEmail()
+      .normalizeEmail({ gmail_remove_dots: false })
+      .exists(),
+  ]),
+  authController.loginWithGooglePhimGiaLai
+);
+
 module.exports = router;

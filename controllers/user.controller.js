@@ -1,5 +1,6 @@
 const { AppError, sendResponse, catchAsync } = require("../helpers/utils");
 const User = require("../models/User");
+const UserGiaLai = require("../models/UserGiaLai");
 const Post = require("../models/Post");
 const bcrypt = require("bcryptjs");
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -118,26 +119,6 @@ userController.deletePostFromFavoriteList = catchAsync(
   }
 );
 
-// userController.verifyEmail = async (req, res, next) => {
-//   const { token } = req.params;
-
-//   try {
-//     const decodedToken = jwt.verify(token, JWT_SECRET_KEY);
-//     const userId = decodedToken.userId;
-
-//     // Tìm và cập nhật trạng thái xác thực của người dùng
-//     const user = await User.findByIdAndUpdate(userId, { isVerified: true });
-
-//     if (!user) {
-//       throw new AppError(400, "Verify Error", "User not found");
-//     }
-
-//     return sendResponse(res, 200, true, null, null, "Verify Email successful");
-//   } catch (error) {
-//     return next(new AppError(400, "Verify Error", "Invalid Token"));
-//   }
-// };
-
 userController.changePassword = catchAsync(async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
 
@@ -174,6 +155,27 @@ userController.getCurrentUser = catchAsync(async (req, res, next) => {
 
   //Step 2: Business Logic Validator
   const user = await User.findById(currentUserId);
+  if (!user)
+    throw new AppError(400, "User not found", "Get Current User Error");
+
+  //Step 3: Process
+
+  //Step 4: Response result
+  return sendResponse(
+    res,
+    200,
+    true,
+    user,
+    null,
+    "Get Current User Successful"
+  );
+});
+userController.getCurrentUserGiaLai = catchAsync(async (req, res, next) => {
+  //Step 1: Get data
+  const currentUserId = req.userId;
+
+  //Step 2: Business Logic Validator
+  const user = await UserGiaLai.findById(currentUserId);
   if (!user)
     throw new AppError(400, "User not found", "Get Current User Error");
 
@@ -302,5 +304,94 @@ userController.deleteSingleUserByAdmin = catchAsync(async (req, res, next) => {
     "Delete User By Admin Success"
   );
 });
+
+//=============================================
+userController.addMovieToFavoriteList = catchAsync(async (req, res, next) => {
+  const userId = req.userId;
+  const movieId = req.params.movieId;
+  const favMovie = req.body;
+
+  const user = await UserGiaLai.findById(userId);
+
+  if (!user) {
+    return next(
+      new AppError(400, "User does not exist", "Add favorite movie list error")
+    );
+  }
+
+  const isFavorite = user.movieFavoriteList.find(
+    ({ movie }) => movie._id?.toString() === movieId
+  );
+
+  if (!isFavorite) {
+    user.movieFavoriteList.push(favMovie);
+    await user.save();
+
+    return sendResponse(
+      res,
+      200,
+      true,
+      user,
+      null,
+      "Add movie to Favorite List success"
+    );
+  }
+
+  return next(
+    new AppError(
+      400,
+      "Movie already exists in your Favorite List",
+      "Add favorite movie list error"
+    )
+  );
+});
+
+userController.deleteMovieFromFavoriteList = catchAsync(
+  async (req, res, next) => {
+    const userId = req.userId;
+    const movieId = req.params.movieId;
+
+    const user = await UserGiaLai.findById(userId);
+    if (!user) {
+      return next(
+        new AppError(
+          400,
+          "User does not exist",
+          "Delete favorite movie list error"
+        )
+      );
+    }
+
+    // Find the movie in the favorite list
+    const movieIndex = user.movieFavoriteList.findIndex(
+      ({ movie }) => movie._id?.toString() === movieId
+    );
+
+    if (movieIndex !== -1) {
+      // Remove the movie from the favorite list
+      user.movieFavoriteList.splice(movieIndex, 1);
+      await user.save();
+
+      return sendResponse(
+        res,
+        200,
+        true,
+        user,
+        null,
+        "Delete movie from Favorite List success"
+      );
+    } else {
+      return next(
+        new AppError(
+          400,
+          "Movie does not exist in your Favorite List",
+          "Delete favorite movie list error"
+        )
+      );
+    }
+  }
+);
+
+//=============================================
 
 module.exports = userController;
