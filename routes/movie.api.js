@@ -14,7 +14,7 @@ const { body } = require("express-validator");
 router.post(
   "/",
   validators.validate([body("keywordMovie", "Invalid Movies")]),
-  movieController.movieRequested
+  movieController.movie
 );
 
 module.exports = router;

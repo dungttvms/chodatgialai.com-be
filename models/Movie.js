@@ -7,5 +7,5 @@ const movieSchema = Schema(
   },
   { timeStamps: true }
 );
-const MovieRequested = mongoose.model("Movie", movieSchema);
-module.exports = MovieRequested;
+const Movie = mongoose.model("Movie", movieSchema);
+module.exports = Movie;

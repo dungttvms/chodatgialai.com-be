@@ -68,6 +68,7 @@ authController.loginWithGoogle = catchAsync(async (req, res, next) => {
     return next(error);
   }
 });
+
 authController.loginWithGooglePhimGiaLai = catchAsync(
   async (req, res, next) => {
     try {

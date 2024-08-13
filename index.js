@@ -20,10 +20,26 @@ app.use("/", indexRouter);
 
 const mongoose = require("mongoose");
 const mongoURI = process.env.MONGODB_URI;
+
+// Kết nối đến cơ sở dữ liệu chính
 mongoose
   .connect(mongoURI)
   .then(() => console.log("Server is ready"))
   .catch((err) => console.log(err));
+
+// Tạo kết nối đến cơ sở dữ liệu thứ hai
+const mongoURI_PhimGiaLai = process.env.MONGODB_URI_PHIM_GIA_LAI;
+const connectionPhimGiaLai = mongoose.createConnection(mongoURI_PhimGiaLai);
+
+// Lắng nghe sự kiện 'connected' khi kết nối thành công
+connectionPhimGiaLai.on("connected", () => {
+  console.log("Server Phim Gia Lai is ready");
+});
+
+// Lắng nghe sự kiện 'error' nếu có lỗi khi kết nối
+connectionPhimGiaLai.on("error", (err) => {
+  console.error("Error connecting to Phim Gia Lai database:", err);
+});
 
 //Error Handler
 //Catch 404 Error

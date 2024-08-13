@@ -6,13 +6,13 @@ const validators = require("../middlewares/validators");
 const { body } = require("express-validator");
 const authController = require("../controllers/auth.controller");
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const clientGoogle = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 router.post("/", async (req, res) => {
   const { token } = req.body;
 
   try {
-    const verify = await client.verifyIdToken({
+    const verify = await clientGoogle.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
@@ -38,7 +38,7 @@ router.post(
 );
 
 router.post(
-  "/loginPhimGiaLai",
+  "/loginGooglePhimGiaLai",
   validators.validate([
     body("email")
       .isEmail()

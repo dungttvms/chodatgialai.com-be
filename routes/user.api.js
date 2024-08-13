@@ -185,5 +185,10 @@ router.delete(
   validators.validate([param("movieId").exists().isString()]),
   userController.deleteMovieFromFavoriteList
 );
+/**
+ * @route getAllData
+ * @description GetAllData (Phim Gia Lai)
+ * @access admin
+ */
 
 module.exports = router;
