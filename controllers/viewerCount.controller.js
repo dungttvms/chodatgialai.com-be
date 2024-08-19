@@ -4,11 +4,11 @@ const ViewerCount = require("../models/ViewerCount");
 const viewerCountController = {};
 
 viewerCountController.getViewerCount = catchAsync(async (req, res, next) => {
-  //   const ipAddress = req.ip;
   const ipAddress =
-    req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+    (req.headers["x-forwarded-for"] || "").split(",")[0].trim() ||
+    req.connection.remoteAddress;
 
-  const existingViewer = await ViewerCount.findOneAndUpdate({ ipAddress }); //note lại findOne
+  const existingViewer = await ViewerCount.findOne({ ipAddress });
 
   if (existingViewer) {
     existingViewer.views++;
