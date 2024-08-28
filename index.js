@@ -20,17 +20,9 @@ app.use("/", indexRouter);
 
 const mongoose = require("mongoose");
 const mongoURI = process.env.MONGODB_URI;
-const connectionOptions = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  poolSize: 10, // Số lượng kết nối đồng thời tối đa trong pool
-  serverSelectionTimeoutMS: 5000, // Thời gian timeout cho việc chọn server MongoDB
-  socketTimeoutMS: 45000, // Thời gian timeout cho việc đọc/ghi socket
-  keepAlive: true, // Giữ kết nối sống
-};
-// Kết nối đến cơ sở dữ liệu chính
+
 mongoose
-  .connect(mongoURI, connectionOptions)
+  .connect(mongoURI)
   .then(() => console.log("Server is ready"))
   .catch((err) => console.log(err));
 
