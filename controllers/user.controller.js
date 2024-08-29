@@ -309,7 +309,10 @@ userController.deleteSingleUserByAdmin = catchAsync(async (req, res, next) => {
 userController.addMovieToFavoriteList = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const movieId = req.params.movieId;
-  const favMovie = req.body;
+  const favMovie = {
+    ...req.body,
+    addedAt: new Date(),
+  };
 
   const user = await UserGiaLai.findById(userId);
 
